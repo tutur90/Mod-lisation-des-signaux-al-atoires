@@ -17,12 +17,12 @@
 function [a,v] = YuleWalkerSolver(Cx,K)
 
 Gx = toeplitz(Cx(1:K))
-Zx = Cx(2:K+1)
 
 %Resolution de Gx.a = Cx
-a =  Gx \ Cx(2:K+1);
+a =  Gx \ Cx(2:K+1).';
 %Calcul de la varaince à partir de la valeur p=0
-v = Cx(1) - Cx(2:K+1)' * a;
+v = Cx(1) - Cx(2:K+1) * a;
+
 
 
 end

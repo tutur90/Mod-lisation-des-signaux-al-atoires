@@ -3,43 +3,43 @@ close all;
 
 N = 256;
 sigma_b = 0.92;
-a = 0.92;
+a = 0.7;
 
 noise = genWhiteNoise(0.5, N);
-AR1 = filter(1, 1-a, noise);
+AR1 = filter([1, 1-a],1, noise);
 sin = genVarSine(100, 1000,256);
 
 bccSig = BiasedCrossCorr(noise, N-1);
 bccAr1 = BiasedCrossCorr(AR1, N-1);
 bccSin = BiasedCrossCorr(sin, N-1);
 
-ubccSig = UnbiasedCrossCorr(noise, N-1);
-ubccAr1 = UnbiasedCrossCorr(AR1, N-1);
-ubccSin = UnbiasedCrossCorr(sin, N-1);
-
-
-var_sin = var(sin);
-var_ar1 = var(AR1);
-var_noise = var(noise);
-
-[voise,fs1] = audioread("data/193309__margo-heston__ooo.flac");
-[nonvoise,fs2] = audioread("data/193305__margo-heston__ch.flac");
-t1=linspace(0,length(voise)/fs1,length(voise));
-t2=linspace(0,length(nonvoise)/fs2,length(nonvoise));
-
-v1 = BiasedCrossCorr(voise, length(voise)-1);
-v2 = BiasedCrossCorr(nonvoise, length(nonvoise)-1);
-
-
-isVoiced(v1, fs1);
-
-
-[PSDk_noise, nuk_noise] = psdEstimator(bccSig, N, 8);
-
-
-[PSD_noise, nu_noise] = psdEstimator(bccSig, N, 8);
-[PSD_ar1, nu_ar1] = psdEstimator(bccAr1, N, 8);
-[PSD_sin, nu_sin] = psdEstimator(bccSin, N, 8);
+% ubccSig = UnbiasedCrossCorr(noise, N-1);
+% ubccAr1 = UnbiasedCrossCorr(AR1, N-1);
+% ubccSin = UnbiasedCrossCorr(sin, N-1);
+% 
+% 
+% var_sin = var(sin);
+% var_ar1 = var(AR1);
+% var_noise = var(noise);
+% 
+% [voise,fs1] = audioread("data/193309__margo-heston__ooo.flac");
+% [nonvoise,fs2] = audioread("data/193305__margo-heston__ch.flac");
+% t1=linspace(0,length(voise)/fs1,length(voise));
+% t2=linspace(0,length(nonvoise)/fs2,length(nonvoise));
+% 
+% v1 = BiasedCrossCorr(voise, length(voise)-1);
+% v2 = BiasedCrossCorr(nonvoise, length(nonvoise)-1);
+% 
+% 
+% isVoiced(v1, fs1);
+% 
+% 
+% [PSDk_noise, nuk_noise] = psdEstimator(bccSig, N, 8);
+% 
+% 
+% [PSD_noise, nu_noise] = psdEstimator(bccSig, N, 8);
+% [PSD_ar1, nu_ar1] = psdEstimator(bccAr1, N, 8);
+% [PSD_sin, nu_sin] = psdEstimator(bccSin, N, 8);
 
 % figure(4)
 % subplot(2, 1, 1); 
@@ -111,58 +111,85 @@ isVoiced(v1, fs1);
 % title('sinusoid');
 
 
-figure(6)
-subplot(3, 1, 1); 
-plot(nu_noise, PSD_noise); 
-title('noise'); 
-
-subplot(3, 1, 2);
-plot(nu_ar1, PSD_ar1); 
-title('AR1'); 
-
-subplot(3, 1, 3); 
-plot(nu_sin, PSD_sin); 
-title('sinusoid');
-
-
-[PSD2_noise, nu2_noise] = psdEstimatorPeriodogram(noise, N);
-[PSD2_ar1, nu2_ar1] = psdEstimatorPeriodogram(AR1, N);
-[PSD2_sin, nu2_sin] = psdEstimatorPeriodogram(sin, N);
-
-
-figure(7)
-subplot(3, 1, 1); 
-plot(nu2_noise, PSD2_noise); 
-title('noise'); 
-
-subplot(3, 1, 2);
-plot(nu2_ar1, PSD2_ar1); 
-title('AR1'); 
-
-subplot(3, 1, 3); 
-plot(nu2_sin, PSD2_sin); 
-title('sinusoid');
+% figure(6)
+% subplot(3, 1, 1); 
+% plot(nu_noise, PSD_noise); 
+% title('noise'); 
+% 
+% subplot(3, 1, 2);
+% plot(nu_ar1, PSD_ar1); 
+% title('AR1'); 
+% 
+% subplot(3, 1, 3); 
+% plot(nu_sin, PSD_sin); 
+% title('sinusoid');
+% 
+% 
+% [PSD2_noise, nu2_noise] = psdEstimatorPeriodogram(noise, N);
+% [PSD2_ar1, nu2_ar1] = psdEstimatorPeriodogram(AR1, N);
+% [PSD2_sin, nu2_sin] = psdEstimatorPeriodogram(sin, N);
+% 
+% 
+% figure(7)
+% subplot(3, 1, 1); 
+% plot(nu2_noise, PSD2_noise); 
+% title('noise'); 
+% 
+% subplot(3, 1, 2);
+% plot(nu2_ar1, PSD2_ar1); 
+% title('AR1'); 
+% 
+% subplot(3, 1, 3); 
+% plot(nu2_sin, PSD2_sin); 
+% title('sinusoid');
 
 
 
 % Find peaks in the signal  
-[peaks1, locations1] = findpeaks(v1);  
-[peaks2, locations2] = findpeaks(v2);  
+% [peaks1, locations1] = findpeaks(v1);  
+% [peaks2, locations2] = findpeaks(v2);  
+% 
+% figure(10) 
+% subplot(2,1,1); 
+% hold on; 
+% plot(t1, v1);  
+% scatter(t1(locations1), peaks1, 'r', 'filled');  
+% disp(mean(diff(t1(locations1)))) 
+% disp(mean(diff(t2(locations2)))) 
+% xlabel('Time');  
+% ylabel('Amplitude');  
+% title('Signal with Peaks voise');  
+% hold off; 
+% subplot(2,1,2); 
+% hold on; 
 
-figure(10) 
-subplot(2,1,1); 
-hold on; 
-plot(t1, v1);  
-scatter(t1(locations1), peaks1, 'r', 'filled');  
-disp(mean(diff(t1(locations1)))) 
-disp(mean(diff(t2(locations2)))) 
-xlabel('Time');  
-ylabel('Amplitude');  
-title('Signal with Peaks voise');  
-hold off; 
-subplot(2,1,2); 
-hold on; 
 
-[a,v] = YuleWalkerSolver(ubccSig,length(ubccAr1)-1)
+K = 256;
+[a,v] = YuleWalkerSolver(bccAr1,K-1);
+
+w = genWhiteNoise(v, length(a)).';
+a_filtered = zeros(N);
+for i = 1:N
+    sum = 0;
+    for j = 1:K
+        sum = sum + a(K) * AR1(i-K);
+    end
+    a_filtred(i) = sum + w(i);
+
+end
+
+n = linspace(1,K-1, K-1);
+
+
+figure(1)
+hold on
+subplot(2,1,1);
+plot(n, a, '-b');
+subplot(2,1,2);
+plot(n, a_filtered,'-r');
+hold off
+
+
+
 
 
